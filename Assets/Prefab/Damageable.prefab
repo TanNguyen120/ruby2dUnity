@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2846909130966467916}
   - component: {fileID: 4115013630050171594}
   - component: {fileID: 3754197068621865911}
+  - component: {fileID: -7595746045932635750}
   m_Layer: 0
   m_Name: Damageable
   m_TagString: Untagged
@@ -76,7 +77,7 @@ SpriteRenderer:
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
-  m_DrawMode: 0
+  m_DrawMode: 2
   m_Size: {x: 2.56, y: 2.56}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
@@ -103,9 +104,22 @@ BoxCollider2D:
     oldSize: {x: 2.56, y: 2.56}
     newSize: {x: 2.56, y: 2.56}
     adaptiveTilingThreshold: 0.5
-    drawMode: 0
+    drawMode: 2
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
   m_Size: {x: 2.56, y: 2.56}
   m_EdgeRadius: 0
+--- !u!114 &-7595746045932635750
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2449806033639929471}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5dbbf4417f6d2a40a97e68d51358e14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 5

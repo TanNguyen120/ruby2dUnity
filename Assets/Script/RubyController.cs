@@ -5,7 +5,7 @@ using UnityEngine;
 public class RubyController : MonoBehaviour
 {
     public float maxHealth = 100;
-    private float health;
+    public float health;
     Rigidbody2D rigidBody;
     public float speed = 5f;
     // Start is called before the first frame update
@@ -26,8 +26,17 @@ public class RubyController : MonoBehaviour
         rigidBody.MovePosition(position);
     }
 
-    void restoreHealth(int amount)
+    public void restoreHealth(int amount)
     {
+        // Mathf clamp make sure health will not go above maxHealth
+        health = Mathf.Clamp(health + amount, 0, maxHealth);
+
 
     }
+
+    public void reciveDamage(int amount)
+    {
+        health -= amount;
+    }
+
 }
