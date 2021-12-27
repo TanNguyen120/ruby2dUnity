@@ -9,6 +9,10 @@ public class robotController : MonoBehaviour
     private bool vertical;
     private int direction;
 
+    private Animator animator;
+
+    private bool broken = true;
+
 
     public float speed = 5f;
     // Start is called before the first frame update
@@ -17,10 +21,23 @@ public class robotController : MonoBehaviour
         direction = 1;
         vertical = true;
         rigidBody = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
+    }
+
+    void Update()
+    {
+        if (!broken)
+        {
+            return; //
+        }
     }
 
     void FixedUpdate()
     {
+        if (!broken)
+        {
+            return; //
+        }
         moveSet();
         timer -= Time.deltaTime;
         if (timer <= 0)
@@ -38,6 +55,9 @@ public class robotController : MonoBehaviour
             Vector2 position = transform.position;
             position.y += speed * Time.deltaTime * direction;
             rigidBody.MovePosition(position);
+            // set animator state
+            animator.SetFloat("Move X", 0);
+            animator.SetFloat("Move Y", direction);
         }
         else
         {
@@ -53,6 +73,12 @@ public class robotController : MonoBehaviour
         {
             other.gameObject.GetComponent<RubyController>().reciveDamage(5);
         }
+    }
+
+    public void Fix()
+    {
+        broken = false;
+        rigidBody.simulated = false;
     }
 
 }
