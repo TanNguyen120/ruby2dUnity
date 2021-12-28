@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Ruby
+  - enemy
+  - NPC
   layers:
   - Default
   - TransparentFX
@@ -12,10 +14,10 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
-  - 
-  - 
+  - projectile
+  - player
+  - confider
+  - NPC
   - 
   - 
   - 

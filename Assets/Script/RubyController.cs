@@ -11,9 +11,16 @@ public class RubyController : MonoBehaviour
 
     public GameObject cog;
 
+    public AudioClip fire;
+
+    public AudioClip questSound;
+
+    public AudioClip hitSound;
     Vector2 lookDirection = new Vector2(1, 0);
 
     Animator animator;
+
+    AudioSource audioSource;
 
     // Start is called before the first frame update
     void Start()
@@ -21,6 +28,7 @@ public class RubyController : MonoBehaviour
         health = maxHealth;
         rigidBody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -36,6 +44,7 @@ public class RubyController : MonoBehaviour
         {
             Launch();
         }
+        talkToNPC();
     }
 
     public void restoreHealth(int amount)
@@ -49,6 +58,9 @@ public class RubyController : MonoBehaviour
     public void reciveDamage(int amount)
     {
         health -= amount;
+        UIHealthBar.instance.SetValue(health / (float)maxHealth);
+        audioSource.PlayOneShot(hitSound);
+        animator.SetTrigger("Hit");
     }
 
     public void moveHandles()
@@ -79,7 +91,31 @@ public class RubyController : MonoBehaviour
 
         CogController projectile = projectileObject.GetComponent<CogController>();
         projectile.Launch(lookDirection, 300);
-
+        audioSource.PlayOneShot(fire);
         animator.SetTrigger("Launch");
+    }
+
+    void talkToNPC()
+    {
+
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            RaycastHit2D hit = Physics2D.Raycast(rigidBody.position + Vector2.up * 0.2f, lookDirection, 1.5f, LayerMask.GetMask("NPC"));
+            if (hit.collider != null)
+            {
+                if (hit.collider.GetComponent<NPCController>() != null)
+                {
+                    hit.collider.GetComponent<NPCController>().displayDialog();
+                    audioSource.PlayOneShot(questSound);
+                }
+                Debug.Log("Raycast has hit the object " + hit.collider.gameObject);
+            }
+        }
+
+    }
+
+    public void playPickUpSound(AudioClip clip)
+    {
+        audioSource.PlayOneShot(clip);
     }
 }

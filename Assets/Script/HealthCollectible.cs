@@ -5,12 +5,19 @@ using UnityEngine;
 public class HealthCollectible : MonoBehaviour
 {
     // Start is called before the first frame update
+    public AudioClip collectedClip;
     public int healthRestore = 5;
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        other.gameObject.GetComponent<RubyController>().restoreHealth(healthRestore);
-        Destroy(gameObject);
+        if (other.gameObject.tag == "Ruby")
+        {
+            other.gameObject.GetComponent<RubyController>().restoreHealth(healthRestore);
+            other.gameObject.GetComponent<RubyController>().playPickUpSound(collectedClip);
+
+            Destroy(gameObject);
+
+        }
     }
 
 }
