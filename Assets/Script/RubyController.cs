@@ -18,33 +18,79 @@ public class RubyController : MonoBehaviour
     public AudioClip hitSound;
     Vector2 lookDirection = new Vector2(1, 0);
 
+    [SerializeField]
+    private CharacterController controller;
+    [SerializeField]
+    private Vector3 playerVelocity;
+    [SerializeField]
+    private bool groundedPlayer;
+    [SerializeField]
+    private float playerSpeed = 2.0f;
+    [SerializeField]
+    private float jumpHeight = 1.0f;
+    [SerializeField]
+    private float gravityValue = -9.81f;
+
     Animator animator;
 
     AudioSource audioSource;
 
-    // Start is called before the first frame update
+    [SerializeField] Player playerInput;
+
+    void Awake()
+    {
+        playerInput = new Player();
+        playerInput.Enable();
+
+    }
     void Start()
     {
         health = maxHealth;
         rigidBody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         audioSource = GetComponent<AudioSource>();
+        controller = gameObject.GetComponent<CharacterController>();
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        moveHandles();
+        //moveHandles();
 
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.C))
+        if (playerInput.Ruby.shoot.triggered)
         {
             Launch();
         }
-        talkToNPC();
+        //talkToNPC();
+
+        groundedPlayer = controller.isGrounded;
+        if (groundedPlayer && playerVelocity.y < 0)
+        {
+            playerVelocity.y = 0f;
+        }
+
+        Vector2 movement = playerInput.Ruby.move.ReadValue<Vector2>();
+
+        Vector3 move = new Vector3(movement.x, movement.y, 0f);
+        controller.Move(move * Time.deltaTime * playerSpeed);
+        Debug.Log("move is:" + move);
+        if (move != Vector3.zero)
+        {
+            gameObject.transform.forward = move;
+        }
+
+        // Changes the height position of the player..
+        // if (Input.GetButtonDown("Jump") && groundedPlayer)
+        // {
+        //     playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravityValue);
+        // }
+
+        playerVelocity.y += gravityValue * Time.deltaTime;
+        controller.Move(playerVelocity * Time.deltaTime);
     }
 
     public void restoreHealth(int amount)
@@ -63,27 +109,27 @@ public class RubyController : MonoBehaviour
         animator.SetTrigger("Hit");
     }
 
-    public void moveHandles()
-    {
-        float horizontal = Input.GetAxis("Horizontal");
-        float vertical = Input.GetAxis("Vertical");
-        Vector2 position = transform.position;
-        position.x = position.x + speed * horizontal * Time.deltaTime;
-        position.y = position.y + speed * vertical * Time.deltaTime;
-        rigidBody.MovePosition(position);
-        Vector2 move = new Vector2(horizontal, vertical);
+    // public void moveHandles()
+    // {
+    //     float horizontal = Input.GetAxis("Horizontal");
+    //     float vertical = Input.GetAxis("Vertical");
+    //     Vector2 position = transform.position;
+    //     position.x = position.x + speed * horizontal * Time.deltaTime;
+    //     position.y = position.y + speed * vertical * Time.deltaTime;
+    //     rigidBody.MovePosition(position);
+    //     Vector2 move = new Vector2(horizontal, vertical);
 
-        if (!Mathf.Approximately(move.x, 0.0f) || !Mathf.Approximately(move.y, 0.0f))
-        {
-            lookDirection.Set(move.x, move.y);
-            lookDirection.Normalize();
-        }
+    //     if (!Mathf.Approximately(move.x, 0.0f) || !Mathf.Approximately(move.y, 0.0f))
+    //     {
+    //         lookDirection.Set(move.x, move.y);
+    //         lookDirection.Normalize();
+    //     }
 
-        animator.SetFloat("Look X", lookDirection.x);
-        animator.SetFloat("Look Y", lookDirection.y);
-        animator.SetFloat("Speed", move.magnitude);
+    //     animator.SetFloat("Look X", lookDirection.x);
+    //     animator.SetFloat("Look Y", lookDirection.y);
+    //     animator.SetFloat("Speed", move.magnitude);
 
-    }
+    // }
 
     void Launch()
     {
@@ -118,4 +164,7 @@ public class RubyController : MonoBehaviour
     {
         audioSource.PlayOneShot(clip);
     }
+
+
+
 }
