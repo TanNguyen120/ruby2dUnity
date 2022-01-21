@@ -33,6 +33,14 @@ public class @Player : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""openMenu"",
+                    ""type"": ""Button"",
+                    ""id"": ""f3cd82fd-96ac-4308-9c9b-7c34041c35d5"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -112,6 +120,17 @@ public class @Player : IInputActionCollection, IDisposable
                     ""action"": ""shoot"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8e5b6fe7-dde2-44a4-b61a-19bbcbdaed4c"",
+                    ""path"": ""<Keyboard>/i"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""openMenu"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -122,6 +141,7 @@ public class @Player : IInputActionCollection, IDisposable
         m_Ruby = asset.FindActionMap("Ruby", throwIfNotFound: true);
         m_Ruby_move = m_Ruby.FindAction("move", throwIfNotFound: true);
         m_Ruby_shoot = m_Ruby.FindAction("shoot", throwIfNotFound: true);
+        m_Ruby_openMenu = m_Ruby.FindAction("openMenu", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -173,12 +193,14 @@ public class @Player : IInputActionCollection, IDisposable
     private IRubyActions m_RubyActionsCallbackInterface;
     private readonly InputAction m_Ruby_move;
     private readonly InputAction m_Ruby_shoot;
+    private readonly InputAction m_Ruby_openMenu;
     public struct RubyActions
     {
         private @Player m_Wrapper;
         public RubyActions(@Player wrapper) { m_Wrapper = wrapper; }
         public InputAction @move => m_Wrapper.m_Ruby_move;
         public InputAction @shoot => m_Wrapper.m_Ruby_shoot;
+        public InputAction @openMenu => m_Wrapper.m_Ruby_openMenu;
         public InputActionMap Get() { return m_Wrapper.m_Ruby; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -194,6 +216,9 @@ public class @Player : IInputActionCollection, IDisposable
                 @shoot.started -= m_Wrapper.m_RubyActionsCallbackInterface.OnShoot;
                 @shoot.performed -= m_Wrapper.m_RubyActionsCallbackInterface.OnShoot;
                 @shoot.canceled -= m_Wrapper.m_RubyActionsCallbackInterface.OnShoot;
+                @openMenu.started -= m_Wrapper.m_RubyActionsCallbackInterface.OnOpenMenu;
+                @openMenu.performed -= m_Wrapper.m_RubyActionsCallbackInterface.OnOpenMenu;
+                @openMenu.canceled -= m_Wrapper.m_RubyActionsCallbackInterface.OnOpenMenu;
             }
             m_Wrapper.m_RubyActionsCallbackInterface = instance;
             if (instance != null)
@@ -204,6 +229,9 @@ public class @Player : IInputActionCollection, IDisposable
                 @shoot.started += instance.OnShoot;
                 @shoot.performed += instance.OnShoot;
                 @shoot.canceled += instance.OnShoot;
+                @openMenu.started += instance.OnOpenMenu;
+                @openMenu.performed += instance.OnOpenMenu;
+                @openMenu.canceled += instance.OnOpenMenu;
             }
         }
     }
@@ -212,5 +240,6 @@ public class @Player : IInputActionCollection, IDisposable
     {
         void OnMove(InputAction.CallbackContext context);
         void OnShoot(InputAction.CallbackContext context);
+        void OnOpenMenu(InputAction.CallbackContext context);
     }
 }

@@ -6,7 +6,7 @@ public class RubyController : MonoBehaviour
 {
     public float maxHealth = 100;
     public float health;
-    Rigidbody2D rigidBody;
+    //Rigidbody2D rigidBody;
     public float speed = 5f;
 
     public GameObject cog;
@@ -46,7 +46,7 @@ public class RubyController : MonoBehaviour
     void Start()
     {
         health = maxHealth;
-        rigidBody = GetComponent<Rigidbody2D>();
+        //rigidBody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         audioSource = GetComponent<AudioSource>();
         controller = gameObject.GetComponent<CharacterController>();
@@ -61,6 +61,7 @@ public class RubyController : MonoBehaviour
 
     void Update()
     {
+        transform.rotation = Quaternion.Euler(new Vector3(0.0f, 0.0f, 0.0f));
         if (playerInput.Ruby.shoot.triggered)
         {
             Launch();
@@ -82,6 +83,9 @@ public class RubyController : MonoBehaviour
         {
             gameObject.transform.forward = move;
         }
+        animator.SetFloat("Look X", movement.x);
+        animator.SetFloat("Look Y", movement.y);
+        animator.SetFloat("Speed", move.magnitude);
 
         // Changes the height position of the player..
         // if (Input.GetButtonDown("Jump") && groundedPlayer)
@@ -89,8 +93,13 @@ public class RubyController : MonoBehaviour
         //     playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravityValue);
         // }
 
-        playerVelocity.y += gravityValue * Time.deltaTime;
-        controller.Move(playerVelocity * Time.deltaTime);
+        // playerVelocity.y += gravityValue * Time.deltaTime;
+        // controller.Move(playerVelocity * Time.deltaTime);
+        if (playerInput.Ruby.openMenu.triggered)
+        {
+            Debug.Log("press i");
+            GameManager.instance.openMenu();
+        }
     }
 
     public void restoreHealth(int amount)
@@ -125,15 +134,13 @@ public class RubyController : MonoBehaviour
     //         lookDirection.Normalize();
     //     }
 
-    //     animator.SetFloat("Look X", lookDirection.x);
-    //     animator.SetFloat("Look Y", lookDirection.y);
-    //     animator.SetFloat("Speed", move.magnitude);
+    //     
 
     // }
 
     void Launch()
     {
-        GameObject projectileObject = Instantiate(cog, rigidBody.position + Vector2.up * 0.5f, Quaternion.identity);
+        GameObject projectileObject = Instantiate(cog, gameObject.transform.position + Vector3.up * 0.5f, Quaternion.identity);
 
         CogController projectile = projectileObject.GetComponent<CogController>();
         projectile.Launch(lookDirection, 300);
@@ -146,7 +153,7 @@ public class RubyController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.X))
         {
-            RaycastHit2D hit = Physics2D.Raycast(rigidBody.position + Vector2.up * 0.2f, lookDirection, 1.5f, LayerMask.GetMask("NPC"));
+            RaycastHit2D hit = Physics2D.Raycast(gameObject.transform.position + Vector3.up * 0.2f, lookDirection, 1.5f, LayerMask.GetMask("NPC"));
             if (hit.collider != null)
             {
                 if (hit.collider.GetComponent<NPCController>() != null)
@@ -163,6 +170,16 @@ public class RubyController : MonoBehaviour
     public void playPickUpSound(AudioClip clip)
     {
         audioSource.PlayOneShot(clip);
+    }
+
+    public void saveData()
+    {
+        GameManager.instance.saveGame(gameObject);
+    }
+
+    public void loadData()
+    {
+        GameManager.instance.loadGame(gameObject);
     }
 
 
